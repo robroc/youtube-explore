@@ -8,7 +8,9 @@ __author__ = 'Guillaume Chaslot'
         4) stores the results in a json file
 """
 
-import urllib2
+import urllib.parse
+import urllib.request
+import urllib.error
 import re
 import json
 import sys
@@ -16,6 +18,8 @@ import argparse
 import time
 
 from bs4 import BeautifulSoup
+
+import pdb
 
 RECOMMENDATIONS_PER_VIDEO = 1
 RESULTS_PER_SEARCH = 1
@@ -47,9 +51,10 @@ class YoutubeFollower():
 
     def clean_count(self, text_count):
         # Ignore non ascii
-        ascii_count = text_count.encode('ascii', 'ignore')
+        ascii_count = text_count.encode('ascii', 'ignore').decode('utf8')
         # Ignore non numbers
         p = re.compile(r'[\d,]+')
+
         return int(p.findall(ascii_count)[0].replace(',', ''))
 
     def get_search_results(self, search_terms, max_results, top_rated=False):
@@ -67,7 +72,7 @@ class YoutubeFollower():
             return self._search_infos[search_terms][0:max_results]
 
         # Escaping search terms for youtube
-        escaped_search_terms = urllib2.quote(search_terms.encode('utf-8'))
+        escaped_search_terms = urllib.parse.quote(search_terms.encode('utf-8'))
 
         # We only want search results that are videos, filtered by viewcoung.
         #  This is achieved by using the youtube URI parameter: sp=CAMSAhAB
@@ -88,8 +93,8 @@ class YoutubeFollower():
         headers = {}
         if self._language:
             headers["Accept-Language"] = self._language
-        url_request = urllib2.Request(url, headers=headers)
-        html = urllib2.urlopen(url_request)
+        url_request = urllib.request.Request(url, headers=headers)
+        html = urllib.request.urlopen(url_request)
         soup = BeautifulSoup(html, "lxml")
 
         videos = []
@@ -123,9 +128,9 @@ class YoutubeFollower():
 
         while True:
             try:
-                html = urllib2.urlopen(url)
+                html = urllib.request.urlopen(url)
                 break
-            except urllib2.URLError:
+            except urllib.error.URLError:
                 time.sleep(1)
         soup = BeautifulSoup(html, "lxml")
 
