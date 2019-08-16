@@ -65,7 +65,7 @@ class YoutubeFollower():
             if self._alltime:
                 print("Sorting search results by number of views")
             else:
-                print("Sorting search restuls by relevance")
+                print("Sorting search results by relevance")
 
         # Trying to get results from cache
         if search_terms in self._search_infos and len(self._search_infos[search_terms]) >= max_results:
@@ -359,7 +359,7 @@ class YoutubeFollower():
 
         # Computing the average recommendations of the video:
         # The average is computing only on the top videos, so it is an underestimation of the actual average.
-        if video_infos is []:
+        if len(video_infos) == 0:
             return []
         sum_recos = 0
         for video in video_infos:
